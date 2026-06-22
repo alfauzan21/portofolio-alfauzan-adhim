@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Projects | Alfauzan Adhim</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    },
+                    colors: {
+                        dark: '#050505',
+                        darker: '#000000',
+                    },
+                    boxShadow: {
+                        'white-glow': '0 0 15px rgba(255, 255, 255, 0.15)',
+                        'white-glow-strong': '0 0 30px rgba(255, 255, 255, 0.25)',
+                        'glass': '0 4px 30px rgba(0, 0, 0, 0.5)',
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        html { scroll-behavior: smooth; scrollbar-width: thin; scrollbar-color: #ffffff #050505; }
+        body { background-color: #050505; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #fff; }
+
+        .glass-card {
+            background: rgba(255,255,255,0.02);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 4px 30px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.07);
+        }
+        .glow-text { text-shadow: 0 0 15px rgba(255,255,255,0.3), 0 0 30px rgba(255,255,255,0.1); }
+
+        @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+        .float-anim { animation: float 4s ease-in-out infinite; }
+
+        @keyframes mesh-1 { 0%,100%{transform:translate(0,0) scale(1)} 33%{transform:translate(5%,10%) scale(1.1)} 66%{transform:translate(-10%,5%) scale(0.9)} }
+        @keyframes mesh-2 { 0%,100%{transform:translate(0,0) scale(1)} 33%{transform:translate(-10%,-5%) scale(1.1)} 66%{transform:translate(5%,-10%) scale(0.95)} }
+        .animate-mesh-1 { animation: mesh-1 20s ease-in-out infinite; }
+        .animate-mesh-2 { animation: mesh-2 25s ease-in-out infinite reverse; }
+
+        .film-grain {
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            background-repeat: repeat; background-size: 150px;
+        }
+
+        @keyframes reveal-up { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+        .reveal-up { animation: reveal-up 0.7s cubic-bezier(0.16,1,0.3,1) both; }
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+        .delay-400 { animation-delay: 0.4s; }
+        .delay-500 { animation-delay: 0.5s; }
+
+        /* Tab styles */
+        .tab-btn { transition: all 0.3s ease; }
+        .tab-btn.active { color: #fff; border-bottom-color: #fff; }
+        .tab-btn:not(.active) { color: #6b7280; border-bottom-color: transparent; }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        /* Subtab styles */
+        .subtab-btn { transition: all 0.3s ease; }
+        .subtab-btn.active { background: rgba(255,255,255,0.1); color: #fff; border-color: rgba(255,255,255,0.4); }
+        .subtab-btn:not(.active) { color: #6b7280; border-color: rgba(255,255,255,0.1); }
+        .subtab-panel { display: none; }
+        .subtab-panel.active { display: block; }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            display: none;
+            position: fixed; inset: 0; z-index: 9999;
+            background: rgba(0,0,0,0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            overflow-y: auto;
+        }
+        .modal-overlay.open { display: flex; align-items: flex-start; justify-content: center; padding: 1rem; }
+
+        /* Lightbox */
+        .lightbox {
+            display: none;
+            position: fixed; inset: 0; z-index: 99999;
+            background: rgba(0,0,0,0.97);
+            align-items: center; justify-content: center;
+        }
+        .lightbox.open { display: flex; }
+        .lightbox img { max-width: 95vw; max-height: 95vh; object-fit: contain; border-radius: 8px; }
+
+        /* Gallery grid */
+        .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
+        @media(max-width:640px) { .media-grid { grid-template-columns: repeat(auto-fill, minmax(140px,1fr)); } }
+
+        /* Video embed */
+        .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; }
+        .video-wrapper iframe, .video-wrapper video { position: absolute; top:0; left:0; width:100%; height:100%; border-radius:12px; border:0; }
+
+        /* Nav active */
+        .nav-link.active { color: #fff; }
+        .nav-link.active span { width: 100%; }
+
+        /* Scrollbar in modal */
+        .modal-inner::-webkit-scrollbar { width: 4px; }
+        .modal-inner::-webkit-scrollbar-thumb { background: #333; border-radius:4px; }
+
+        /* Project card hover */
+        .project-card { transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; }
+        .project-card:hover { transform: translateY(-6px); box-shadow: 0 0 20px rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.3); }
+
+        /* Media item hover */
+        .media-item { cursor: pointer; transition: transform 0.3s ease; position: relative; overflow: hidden; border-radius: 12px; }
+        .media-item:hover { transform: scale(1.03); }
+        .media-item img { width:100%; height:140px; object-fit:cover; filter:grayscale(60%); transition: filter 0.3s ease, transform 0.3s ease; display:block; }
+        .media-item:hover img { filter:grayscale(0%); transform: scale(1.05); }
+        .media-item .overlay { position:absolute; inset:0; background:linear-gradient(to top, rgba(0,0,0,0.8), transparent); opacity:0; transition: opacity 0.3s ease; display:flex; align-items:flex-end; padding:0.5rem; }
+        .media-item:hover .overlay { opacity:1; }
+    </style>
+</head>
+<body class="bg-dark text-gray-300 font-sans overflow-x-hidden antialiased selection:bg-white selection:text-dark">
+
+    <!-- Background -->
+    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden bg-black">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-white opacity-[0.06] rounded-full blur-[120px] mix-blend-screen animate-mesh-1"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[60vw] h-[60vw] bg-white opacity-[0.04] rounded-full blur-[150px] mix-blend-screen animate-mesh-2"></div>
+        <div class="absolute inset-0 z-10 opacity-20 pointer-events-none film-grain"></div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 transition-all duration-300 backdrop-blur-md bg-dark/70 border-b border-white/10" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="index.html" class="flex items-center gap-2 cursor-pointer group">
+                    <span class="text-2xl font-bold text-white transition-colors duration-300 group-hover:text-gray-300">&lt;Dev/&gt;</span>
+                </a>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html#home" class="nav-link text-gray-400 hover:text-white transition-colors text-sm font-medium uppercase tracking-wider relative group">
+                        Home <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-white transition-all duration-300 group-hover:w-full"></span>
+                    </a>
+                    <a href="index.html#about" class="nav-link text-gray-400 hover:text-white transition-colors text-sm font-medium uppercase tracking-wider relative group">
+                        About <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-white transition-all duration-300 group-hover:w-full"></span>
+                    </a>
+                    <a href="index.html#skills" class="nav-link text-gray-400 hover:text-white transition-colors text-sm font-medium uppercase tracking-wider relative group">
+                        Skills <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-white transition-all duration-300 group-hover:w-full"></span>
+                    </a>
+                    <a href="projects.html" class="nav-link active text-white transition-colors text-sm font-medium uppercase tracking-wider relative group">
+                        Projects <span class="absolute -bottom-1 left-0 w-full h-0.5 bg-white"></span>
+                    </a>
+                    <a href="index.html#experience" class="nav-link text-gray-400 hover:text-white transition-colors text-sm font-medium uppercase tracking-wider relative group">
+                        Experience <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-white transition-all duration-300 group-hover:w-full"></span>
+                    </a>
+                    <a href="index.html#contact" class="px-5 py-2 rounded-full border border-gray-500 text-white hover:bg-white hover:text-dark transition-all duration-300 text-sm font-medium uppercase tracking-wider">
+                        Contact
+                    </a>
+                </div>
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-gray-300 hover:text-white focus:outline-none">
+                        <i class='bx bx-menu text-3xl'></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-dark/95 backdrop-blur-xl border-b border-white/10 absolute w-full shadow-2xl">
+            <div class="px-4 pt-2 pb-4 space-y-1 flex flex-col items-center">
+                <a href="index.html" class="block px-3 py-2 text-base font-medium text-gray-400 hover:text-white">Home</a>
+                <a href="index.html#about" class="block px-3 py-2 text-base font-medium text-gray-400 hover:text-white">About</a>
+                <a href="index.html#skills" class="block px-3 py-2 text-base font-medium text-gray-400 hover:text-white">Skills</a>
+                <a href="projects.html" class="block px-3 py-2 text-base font-medium text-white">Projects</a>
+                <a href="index.html#experience" class="block px-3 py-2 text-base font-medium text-gray-400 hover:text-white">Experience</a>
+                <a href="index.html#contact" class="block px-3 py-2 text-base font-medium text-gray-400 hover:text-white">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main -->
+    <main class="relative z-10 pt-28 pb-20 px-4 sm:px-6 lg:px-8 min-h-screen">
+        <div class="max-w-7xl mx-auto">
+
+            <!-- Header -->
+            <div class="text-center mb-12 reveal-up">
+                <a href="index.html" class="inline-flex items-center gap-2 text-gray-500 hover:text-white transition-colors text-sm mb-6 group">
+                    <i class='bx bx-arrow-back group-hover:-translate-x-1 transition-transform'></i> Back to Home
+                </a>
+                <h1 class="text-4xl md:text-6xl font-bold text-white glow-text mb-4">All Projects</h1>
+                <div class="w-24 h-1 bg-white mx-auto rounded-full mb-4"></div>
+                <p class="text-gray-500 max-w-xl mx-auto">A complete showcase of my work — from web apps to creative multimedia.</p>
+            </div>
+
+            <!-- Main Tabs -->
+            <div class="reveal-up delay-100">
+                <div class="flex justify-center gap-0 mb-10 border-b border-white/10">
+                    <button class="tab-btn active px-8 py-4 text-base font-semibold border-b-2 tracking-wide" data-tab="websites">
+                        <i class='bx bx-globe mr-2'></i>Website & Aplikasi
+                    </button>
+                    <button class="tab-btn px-8 py-4 text-base font-semibold border-b-2 tracking-wide" data-tab="multimedia">
+                        <i class='bx bx-camera mr-2'></i>Multimedia
+                    </button>
+                </div>
+
+                <!-- ===== WEBSITE & APLIKASI TAB ===== -->
+                <div id="tab-websites" class="tab-panel active">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+                        <!-- Card 1 -->
+                        <div class="glass-card project-card rounded-2xl overflow-hidden group reveal-up delay-100">
+                            <div class="relative h-56 overflow-hidden">
+                                <div class="absolute inset-0 bg-dark/40 group-hover:bg-dark/10 transition-all duration-500 z-10"></div>
+                                <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80" alt="Cafe Management" class="w-full h-full object-cover filter grayscale group-hover:grayscale-[20%] transform group-hover:scale-110 transition-all duration-700">
+                                <div class="absolute top-4 right-4 z-20 flex flex-wrap gap-2">
+                                    <span class="px-3 py-1 text-xs font-semibold bg-dark/80 backdrop-blur-md rounded-full border border-gray-600 text-white">Laravel</span>
+                                    <span class="px-3 py-1 text-xs font-semibold bg-dark/80 backdrop-blur-md rounded-full border border-gray-600 text-gray-300">Tailwind</span>
+                                </div>
+                            </div>
+                            <div class="p-6 relative">
+                                <div class="absolute -top-6 right-6 w-12 h-12 bg-dark rounded-full flex items-center justify-center border border-white/10 group-hover:border-white transition-all duration-300 z-20">
+                                    <i class='bx bx-link-external text-xl text-gray-400 group-hover:text-white'></i>
+                                </div>
+                                <h3 class="text-xl font-bold mb-2 text-gray-200 group-hover:text-white transition-colors">Cafe Management System</h3>
+                                <p class="text-gray-400 text-sm mb-5 leading-relaxed">A modern cafe management and employee attendance system built with Laravel, featuring a minimalist dashboard, real-time status updates, and interactive data visualization.</p>
+                                <div class="flex items-center gap-3">
+                                    <a href="#" class="flex-1 text-center px-4 py-2 bg-white/5 hover:bg-white hover:text-dark border border-gray-700 hover:border-white rounded-lg text-sm font-medium transition-all duration-300">Live Demo</a>
+                                    <a href="#" class="flex items-center justify-center w-10 h-10 bg-white/5 hover:bg-white hover:text-dark border border-gray-700 rounded-lg transition-all duration-300">
+                                        <i class='bx bxl-github text-xl'></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 2 -->
+                        <div class="glass-card project-card rounded-2xl overflow-hidden group reveal-up delay-200">
+                            <div class="relative h-56 overflow-hidden">
+                                <div class="absolute inset-0 bg-dark/40 group-hover:bg-dark/10 transition-all duration-500 z-10"></div>
+                                <img src="https://images.unsplash.com/photo-1607799279861-4ddbc4d69b91?auto=format&fit=crop&w=800&q=80" alt="E-Commerce" class="w-full h-full object-cover filter grayscale group-hover:grayscale-[20%] transform group-hover:scale-110 transition-all duration-700">
+                                <div class="absolute top-4 right-4 z-20 flex flex-wrap gap-2">
+                                    <span class="px-3 py-1 text-xs font-semibold bg-dark/80 backdrop-blur-md rounded-full border border-gray-600 text-white">Flutter</span>
+                                    <span class="px-3 py-1 text-xs font-semibold bg-dark/80 backdrop-blur-md rounded-full border border-gray-600 text-gray-300">Firebase</span>
+                                </div>
+                            </div>
+                            <div class="p-6 relative">
+                                <div class="absolute -top-6 right-6 w-12 h-12 bg-dark rounded-full flex items-center justify-center border border-white/10 group-hover:border-white transition-all duration-300 z-20">
+                                    <i class='bx bx-link-external text-xl text-gray-400 group-hover:text-white'></i>
+                                </div>
+                                <h3 class="text-xl font-bold mb-2 text-gray-200 group-hover:text-white transition-colors">E-Commerce Mobile App</h3>
+                                <p class="text-gray-400 text-sm mb-5 leading-relaxed">A fully functional e-commerce mobile application with cross-platform support. Features user authentication, product catalog, cart management, and secure checkout process.</p>
+                                <div class="flex items-center gap-3">
+                                    <a href="#" class="flex-1 text-center px-4 py-2 bg-white/5 hover:bg-white hover:text-dark border border-gray-700 hover:border-white rounded-lg text-sm font-medium transition-all duration-300">View App</a>
+                                    <a href="#" class="flex items-center justify-center w-10 h-10 bg-white/5 hover:bg-white hover:text-dark border border-gray-700 rounded-lg transition-all duration-300">
+                                        <i class='bx bxl-github text-xl'></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 3 -->
+                        <div class="glass-card project-card rounded-2xl overflow-hidden group reveal-up delay-300">
+                            <div class="relative h-56 overflow-hidden">
+                                <div class="absolute inset-0 bg-dark/40 group-hover:bg-dark/10 transition-all duration-500 z-10"></div>
+                                <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=800&q=80" alt="Dashboard" class="w-full h-full object-cover filter grayscale group-hover:grayscale-[20%] transform group-hover:scale-110 transition-all duration-700">
+                                <div class="absolute top-4 right-4 z-20 flex flex-wrap gap-2">
+                                    <span class="px-3 py-1 text-xs font-semibold bg-dark/80 backdrop-blur-md rounded-full border border-gray-600 text-white">Laravel</span>
+                                    <span class="px-3 py-1 text-xs font-semibold bg-dark/80 backdrop-blur-md rounded-full border border-gray-600 text-white">JS</span>
+                                    <span class="px-3 py-1 text-xs font-semibold bg-dark/80 backdrop-blur-md rounded-full border border-gray-600 text-gray-300">Figma</span>
+                                </div>
+                            </div>
+                            <div class="p-6 relative">
+                                <div class="absolute -top-6 right-6 w-12 h-12 bg-dark rounded-full flex items-center justify-center border border-white/10 group-hover:border-white transition-all duration-300 z-20">
+                                    <i class='bx bx-link-external text-xl text-gray-400 group-hover:text-white'></i>
+                                </div>
+                                <h3 class="text-xl font-bold mb-2 text-gray-200 group-hover:text-white transition-colors">Corporate Dashboard UI</h3>
+                                <p class="text-gray-400 text-sm mb-5 leading-relaxed">A premium, glassmorphism-inspired administrative dashboard designed in Figma and converted to a responsive, interactive web interface using modern JavaScript and CSS.</p>
+                                <div class="flex items-center gap-3">
+                                    <a href="https://mystiquebanyuwangigroup.co.id/" class="flex-1 text-center px-4 py-2 bg-white/5 hover:bg-white hover:text-dark border border-gray-700 hover:border-white rounded-lg text-sm font-medium transition-all duration-300">Live Demo</a>
+                                    <a href="#" class="flex items-center justify-center w-10 h-10 bg-white/5 hover:bg-white hover:text-dark border border-gray-700 rounded-lg transition-all duration-300">
+                                        <i class='bx bxl-github text-xl'></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 4 -->
+                        <div class="glass-card project-card rounded-2xl overflow-hidden group reveal-up delay-400">
+                            <div class="relative h-56 overflow-hidden">
+                                <div class="absolute inset-0 bg-dark/40 group-hover:bg-dark/10 transition-all duration-500 z-10"></div>
+                                <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80" alt="Portfolio" class="w-full h-full object-cover filter grayscale group-hover:grayscale-[20%] transform group-hover:scale-110 transition-all duration-700">
+                                <div class="absolute top-4 right-4 z-20 flex flex-wrap gap-2">
+                                    <span class="px-3 py-1 text-xs font-semibold bg-dark/80 backdrop-blur-md rounded-full border border-gray-600 text-white">HTML</span>
+                                    <span class="px-3 py-1 text-xs font-semibold bg-dark/80 backdrop-blur-md rounded-full border border-gray-600 text-gray-300">Tailwind</span>
+                                    <span class="px-3 py-1 text-xs font-semibold bg-dark/80 backdrop-blur-md rounded-full border border-gray-600 text-gray-300">JS</span>
+                                </div>
+                            </div>
+                            <div class="p-6 relative">
+                                <div class="absolute -top-6 right-6 w-12 h-12 bg-dark rounded-full flex items-center justify-center border border-white/10 group-hover:border-white transition-all duration-300 z-20">
+                                    <i class='bx bx-link-external text-xl text-gray-400 group-hover:text-white'></i>
+                                </div>
+                                <h3 class="text-xl font-bold mb-2 text-gray-200 group-hover:text-white transition-colors">Personal Portfolio Website</h3>
+                                <p class="text-gray-400 text-sm mb-5 leading-relaxed">A sleek, monochromatic personal portfolio website featuring glassmorphism UI, parallax background, animated scroll reveals, and a fully responsive layout.</p>
+                                <div class="flex items-center gap-3">
+                                    <a href="#" class="flex-1 text-center px-4 py-2 bg-white/5 hover:bg-white hover:text-dark border border-gray-700 hover:border-white rounded-lg text-sm font-medium transition-all duration-300">Live Demo</a>
+                                    <a href="#" class="flex items-center justify-center w-10 h-10 bg-white/5 hover:bg-white hover:text-dark border border-gray-700 rounded-lg transition-all duration-300">
+                                        <i class='bx bxl-github text-xl'></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 5 -->
+                        <div class="glass-card project-card rounded-2xl overflow-hidden group reveal-up delay-500">
+                            <div class="relative h-56 overflow-hidden">
+                                <div class="absolute inset-0 bg-dark/40 group-hover:bg-dark/10 transition-all duration-500 z-10"></div>
+                                <img src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=800&q=80" alt="School System" class="w-full h-full object-cover filter grayscale group-hover:grayscale-[20%] transform group-hover:scale-110 transition-all duration-700">
+                                <div class="absolute top-4 right-4 z-20 flex flex-wrap gap-2">
+                                    <span class="px-3 py-1 text-xs font-semibold bg-dark/80 backdrop-blur-md rounded-full border border-gray-600 text-white">PHP</span>
+                                    <span class="px-3 py-1 text-xs font-semibold bg-dark/80 backdrop-blur-md rounded-full border border-gray-600 text-gray-300">MySQL</span>
+                                </div>
+                            </div>
+                            <div class="p-6 relative">
+                                <div class="absolute -top-6 right-6 w-12 h-12 bg-dark rounded-full flex items-center justify-center border border-white/10 group-hover:border-white transition-all duration-300 z-20">
+                                    <i class='bx bx-link-external text-xl text-gray-400 group-hover:text-white'></i>
+                                </div>
+                                <h3 class="text-xl font-bold mb-2 text-gray-200 group-hover:text-white transition-colors">School Management System</h3>
+                                <p class="text-gray-400 text-sm mb-5 leading-relaxed">A complete school management platform including student data, grade management, class scheduling, and attendance tracking with role-based access control.</p>
+                                <div class="flex items-center gap-3">
+                                    <a href="#" class="flex-1 text-center px-4 py-2 bg-white/5 hover:bg-white hover:text-dark border border-gray-700 hover:border-white rounded-lg text-sm font-medium transition-all duration-300">Live Demo</a>
+                                    <a href="#" class="flex items-center justify-center w-10 h-10 bg-white/5 hover:bg-white hover:text-dark border border-gray-700 rounded-lg transition-all duration-300">
+                                        <i class='bx bxl-github text-xl'></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 6 -->
+                        <div class="glass-card project-card rounded-2xl overflow-hidden group reveal-up delay-500">
+                            <div class="relative h-56 overflow-hidden">
+                                <div class="absolute inset-0 bg-dark/40 group-hover:bg-dark/10 transition-all duration-500 z-10"></div>
+                                <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80" alt="Landing Page" class="w-full h-full object-cover filter grayscale group-hover:grayscale-[20%] transform group-hover:scale-110 transition-all duration-700">
+                                <div class="absolute top-4 right-4 z-20 flex flex-wrap gap-2">
+                                    <span class="px-3 py-1 text-xs font-semibold bg-dark/80 backdrop-blur-md rounded-full border border-gray-600 text-white">HTML</span>
+                                    <span class="px-3 py-1 text-xs font-semibold bg-dark/80 backdrop-blur-md rounded-full border border-gray-600 text-gray-300">CSS</span>
+                                </div>
+                            </div>
+                            <div class="p-6 relative">
+                                <div class="absolute -top-6 right-6 w-12 h-12 bg-dark rounded-full flex items-center justify-center border border-white/10 group-hover:border-white transition-all duration-300 z-20">
+                                    <i class='bx bx-link-external text-xl text-gray-400 group-hover:text-white'></i>
+                                </div>
+                                <h3 class="text-xl font-bold mb-2 text-gray-200 group-hover:text-white transition-colors">Product Landing Page</h3>
+                                <p class="text-gray-400 text-sm mb-5 leading-relaxed">High-converting, animated product landing page with scroll-triggered animations, interactive feature sections, and optimized performance across all devices.</p>
+                                <div class="flex items-center gap-3">
+                                    <a href="#" class="flex-1 text-center px-4 py-2 bg-white/5 hover:bg-white hover:text-dark border border-gray-700 hover:border-white rounded-lg text-sm font-medium transition-all duration-300">Live Demo</a>
+                                    <a href="#" class="flex items-center justify-center w-10 h-10 bg-white/5 hover:bg-white hover:text-dark border border-gray-700 rounded-lg transition-all duration-300">
+                                        <i class='bx bxl-github text-xl'></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- ===== MULTIMEDIA TAB ===== -->
+                <div id="tab-multimedia" class="tab-panel">
+                    <!-- Subtabs -->
+                    <div class="flex justify-center gap-4 mb-10">
+                        <button class="subtab-btn active px-6 py-2.5 rounded-full border font-medium text-sm tracking-wide flex items-center gap-2" data-subtab="foto">
+                            <i class='bx bx-camera text-lg'></i> Fotografer
+                        </button>
+                        <button class="subtab-btn px-6 py-2.5 rounded-full border font-medium text-sm tracking-wide flex items-center gap-2" data-subtab="video">
+                            <i class='bx bx-video text-lg'></i> Videografer
+                        </button>
+                    </div>
+
+                    <!-- FOTO Subtab -->
+                    <div id="subtab-foto" class="subtab-panel active">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 max-w-4xl mx-auto">
+
+                            <!-- Photo Album Card 1 -->
+                            <div class="glass-card project-card rounded-2xl overflow-hidden cursor-pointer group reveal-up delay-100 open-photo-modal"
+                                 data-album-title="Street Photography"
+                                 data-album-desc="Capturing candid moments and urban life. This album explores the raw beauty of everyday scenes in the city — people in motion, light through alleys, and the quiet corners of busy streets."
+                                 data-photos='[
+                                   {"src":"https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=1000&q=80","caption":"City Lights at Dusk","date":"15 Maret 2024"},
+                                   {"src":"https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=1000&q=80","caption":"Rush Hour","date":"20 Maret 2024"},
+                                   {"src":"https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?auto=format&fit=crop&w=1000&q=80","caption":"Between Buildings","date":"5 April 2024"},
+                                   {"src":"https://images.unsplash.com/photo-1444723121867-7a241cacace9?auto=format&fit=crop&w=1000&q=80","caption":"Urban Mirror","date":"12 April 2024"}
+                                 ]'>
+                                <div class="relative h-56 overflow-hidden">
+                                    <div class="absolute inset-0 bg-dark/40 group-hover:bg-dark/10 transition-all duration-500 z-10"></div>
+                                    <img src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=800&q=80" alt="Street Photography" class="w-full h-full object-cover filter grayscale group-hover:grayscale-[20%] transform group-hover:scale-110 transition-all duration-700">
+                                    <div class="absolute top-4 right-4 z-20">
+                                        <span class="px-3 py-1 text-xs font-semibold bg-dark/80 backdrop-blur-md rounded-full border border-gray-600 text-white">4 Foto</span>
+                                    </div>
+                                    <div class="absolute bottom-4 left-4 z-20 flex items-center gap-2 text-white/60 text-sm">
+                                        <i class='bx bx-camera text-lg'></i> Klik untuk lihat
+                                    </div>
+                                </div>
+                                <div class="p-6">
+                                    <div class="flex items-start justify-between">
+                                        <div>
+                                            <h3 class="text-xl font-bold text-gray-200 group-hover:text-white transition-colors mb-1">Street Photography</h3>
+                                            <p class="text-gray-500 text-sm font-mono">Maret – April 2024</p>
+                                        </div>
+                                        <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center border border-white/10 group-hover:bg-white group-hover:text-dark group-hover:border-white transition-all duration-300 shrink-0">
+                                            <i class='bx bx-expand-alt text-lg'></i>
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-400 text-sm mt-3 leading-relaxed line-clamp-2">Capturing candid moments and urban life in the city — people in motion, light through alleys, and quiet corners.</p>
+                                </div>
+                            </div>
+
+                            <!-- Photo Album Card 2 -->
+                            <div class="glass-card project-card rounded-2xl overflow-hidden cursor-pointer group reveal-up delay-200 open-photo-modal"
+                                 data-album-title="Nature & Landscape"
+                                 data-album-desc="Exploring the natural world through the lens — from misty mountains to golden hour fields. Each shot is a pause in time, a breath of fresh air preserved forever."
+                                 data-photos='[
+                                   {"src":"https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1000&q=80","caption":"Mountain Peak at Sunrise","date":"3 Januari 2024"},
+                                   {"src":"https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1000&q=80","caption":"Forest Path","date":"10 Januari 2024"},
+                                   {"src":"https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=1000&q=80","caption":"Golden Hour Fields","date":"22 Februari 2024"}
+                                 ]'>
+                                <div class="relative h-56 overflow-hidden">
+                                    <div class="absolute inset-0 bg-dark/40 group-hover:bg-dark/10 transition-all duration-500 z-10"></div>
+                                    <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=800&q=80" alt="Nature" class="w-full h-full object-cover filter grayscale group-hover:grayscale-[20%] transform group-hover:scale-110 transition-all duration-700">
+                                    <div class="absolute top-4 right-4 z-20">
+                                        <span class="px-3 py-1 text-xs font-semibold bg-dark/80 backdrop-blur-md rounded-full border border-gray-600 text-white">3 Foto</span>
+                                    </div>
+                                    <div class="absolute bottom-4 left-4 z-20 flex items-center gap-2 text-white/60 text-sm">
+                                        <i class='bx bx-camera text-lg'></i> Klik untuk lihat
+                                    </div>
+                                </div>
+                                <div class="p-6">
+                                    <div class="flex items-start justify-between">
+                                        <div>
+                                            <h3 class="text-xl font-bold text-gray-200 group-hover:text-white transition-colors mb-1">Nature & Landscape</h3>
+                                            <p class="text-gray-500 text-sm font-mono">Januari – Februari 2024</p>
+                                        </div>
+                                        <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center border border-white/10 group-hover:bg-white group-hover:text-dark group-hover:border-white transition-all duration-300 shrink-0">
+                                            <i class='bx bx-expand-alt text-lg'></i>
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-400 text-sm mt-3 leading-relaxed line-clamp-2">Exploring the natural world — from misty mountains to golden hour fields, each shot a breath of fresh air.</p>
+                                </div>
+                            </div>
+
+                            <!-- Photo Album Card 3 -->
+                            <div class="glass-card project-card rounded-2xl overflow-hidden cursor-pointer group reveal-up delay-300 open-photo-modal"
+                                 data-album-title="Portrait Session"
+                                 data-album-desc="A series of portrait photographs that focus on character, expression, and the story behind each face. Shot with natural and studio lighting to bring out authentic emotions."
+                                 data-photos='[
+                                   {"src":"https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=1000&q=80","caption":"Natural Light Portrait","date":"8 Februari 2024"},
+                                   {"src":"https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=1000&q=80","caption":"Shadows & Contrast","date":"8 Februari 2024"},
+                                   {"src":"https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?auto=format&fit=crop&w=1000&q=80","caption":"Studio Session","date":"15 Februari 2024"}
+                                 ]'>
+                                <div class="relative h-56 overflow-hidden">
+                                    <div class="absolute inset-0 bg-dark/40 group-hover:bg-dark/10 transition-all duration-500 z-10"></div>
+                                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80" alt="Portrait" class="w-full h-full object-cover filter grayscale group-hover:grayscale-[20%] transform group-hover:scale-110 transition-all duration-700">
+                                    <div class="absolute top-4 right-4 z-20">
+                                        <span class="px-3 py-1 text-xs font-semibold bg-dark/80 backdrop-blur-md rounded-full border border-gray-600 text-white">3 Foto</span>
+                                    </div>
+                                    <div class="absolute bottom-4 left-4 z-20 flex items-center gap-2 text-white/60 text-sm">
+                                        <i class='bx bx-camera text-lg'></i> Klik untuk lihat
+                                    </div>
+                                </div>
+                                <div class="p-6">
+                                    <div class="flex items-start justify-between">
+                                        <div>
+                                            <h3 class="text-xl font-bold text-gray-200 group-hover:text-white transition-colors mb-1">Portrait Session</h3>
+                                            <p class="text-gray-500 text-sm font-mono">Februari 2024</p>
+                                        </div>
+                                        <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center border border-white/10 group-hover:bg-white group-hover:text-dark group-hover:border-white transition-all duration-300 shrink-0">
+                                            <i class='bx bx-expand-alt text-lg'></i>
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-400 text-sm mt-3 leading-relaxed line-clamp-2">A series of portraits focusing on character, expression, and authentic emotions in natural and studio light.</p>
+                                </div>
+                            </div>
+
+                            <!-- Photo Album Card 4 -->
+                            <div class="glass-card project-card rounded-2xl overflow-hidden cursor-pointer group reveal-up delay-400 open-photo-modal"
+                                 data-album-title="Event Documentation"
+                                 data-album-desc="Professional documentation of school and community events — from competitions to cultural performances. Every moment captured with purpose and clarity."
+                                 data-photos='[
+                                   {"src":"https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=1000&q=80","caption":"Opening Ceremony","date":"17 Agustus 2023"},
+                                   {"src":"https://images.unsplash.com/photo-1523580494863-6f3031224c94?auto=format&fit=crop&w=1000&q=80","caption":"Graduation Day","date":"20 Oktober 2023"},
+                                   {"src":"https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&w=1000&q=80","caption":"Competition Moment","date":"5 November 2023"},
+                                   {"src":"https://images.unsplash.com/photo-1531058020387-3be344556be6?auto=format&fit=crop&w=1000&q=80","caption":"Cultural Performance","date":"12 November 2023"}
+                                 ]'>
+                                <div class="relative h-56 overflow-hidden">
+                                    <div class="absolute inset-0 bg-dark/40 group-hover:bg-dark/10 transition-all duration-500 z-10"></div>
+                                    <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=800&q=80" alt="Event" class="w-full h-full object-cover filter grayscale group-hover:grayscale-[20%] transform group-hover:scale-110 transition-all duration-700">
+                                    <div class="absolute top-4 right-4 z-20">
+                                        <span class="px-3 py-1 text-xs font-semibold bg-dark/80 backdrop-blur-md rounded-full border border-gray-600 text-white">4 Foto</span>
+                                    </div>
+                                    <div class="absolute bottom-4 left-4 z-20 flex items-center gap-2 text-white/60 text-sm">
+                                        <i class='bx bx-camera text-lg'></i> Klik untuk lihat
+                                    </div>
+                                </div>
+                                <div class="p-6">
+                                    <div class="flex items-start justify-between">
+                                        <div>
+                                            <h3 class="text-xl font-bold text-gray-200 group-hover:text-white transition-colors mb-1">Event Documentation</h3>
+                                            <p class="text-gray-500 text-sm font-mono">Agustus – November 2023</p>
+                                        </div>
+                                        <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center border border-white/10 group-hover:bg-white group-hover:text-dark group-hover:border-white transition-all duration-300 shrink-0">
+                                            <i class='bx bx-expand-alt text-lg'></i>
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-400 text-sm mt-3 leading-relaxed line-clamp-2">Professional documentation of school and community events — every moment captured with purpose and clarity.</p>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- VIDEO Subtab -->
+                    <div id="subtab-video" class="subtab-panel">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 max-w-4xl mx-auto">
+
+                            <!-- Video Card 1 -->
+                            <div class="glass-card project-card rounded-2xl overflow-hidden cursor-pointer group reveal-up delay-100 open-video-modal"
+                                 data-video-title="Short Film — Bayangan"
+                                 data-video-desc="A 5-minute short film exploring themes of solitude and memory in a monochromatic visual style. Directed and shot independently using a mirrorless camera with natural lighting."
+                                 data-video-date="20 Desember 2023"
+                                 data-video-url="https://www.youtube.com/embed/dQw4w9WgXcQ"
+                                 data-video-type="youtube">
+                                <div class="relative h-56 overflow-hidden">
+                                    <div class="absolute inset-0 bg-dark/50 group-hover:bg-dark/20 transition-all duration-500 z-10 flex items-center justify-center">
+                                        <div class="w-16 h-16 rounded-full bg-white/10 border border-white/30 flex items-center justify-center group-hover:bg-white group-hover:text-dark transition-all duration-300">
+                                            <i class='bx bx-play text-3xl text-white group-hover:text-dark'></i>
+                                        </div>
+                                    </div>
+                                    <img src="https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&w=800&q=80" alt="Short Film" class="w-full h-full object-cover filter grayscale group-hover:grayscale-[30%] transition-all duration-700">
+                                    <div class="absolute top-4 right-4 z-20">
+                                        <span class="px-3 py-1 text-xs font-semibold bg-dark/80 backdrop-blur-md rounded-full border border-gray-600 text-white">Short Film</span>
+                                    </div>
+                                </div>
+                                <div class="p-6">
+                                    <div class="flex items-start justify-between">
+                                        <div>
+                                            <h3 class="text-xl font-bold text-gray-200 group-hover:text-white transition-colors mb-1">Short Film — Bayangan</h3>
+                                            <p class="text-gray-500 text-sm font-mono">20 Desember 2023</p>
+                                        </div>
+                                        <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center border border-white/10 group-hover:bg-white group-hover:text-dark group-hover:border-white transition-all duration-300 shrink-0">
+                                            <i class='bx bx-play text-lg'></i>
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-400 text-sm mt-3 leading-relaxed line-clamp-2">A 5-minute short film exploring solitude and memory in a monochromatic visual style, shot with natural lighting.</p>
+                                </div>
+                            </div>
+
+                            <!-- Video Card 2 -->
+                            <div class="glass-card project-card rounded-2xl overflow-hidden cursor-pointer group reveal-up delay-200 open-video-modal"
+                                 data-video-title="Event Recap — LKS 2023"
+                                 data-video-desc="A dynamic highlight reel from the LKS (Lomba Kompetensi Siswa) 2023 event. Captured and edited to convey the energy, teamwork, and excitement of the national vocational competition."
+                                 data-video-date="15 November 2023"
+                                 data-video-url="https://www.youtube.com/embed/dQw4w9WgXcQ"
+                                 data-video-type="youtube">
+                                <div class="relative h-56 overflow-hidden">
+                                    <div class="absolute inset-0 bg-dark/50 group-hover:bg-dark/20 transition-all duration-500 z-10 flex items-center justify-center">
+                                        <div class="w-16 h-16 rounded-full bg-white/10 border border-white/30 flex items-center justify-center group-hover:bg-white group-hover:text-dark transition-all duration-300">
+                                            <i class='bx bx-play text-3xl text-white group-hover:text-dark'></i>
+                                        </div>
+                                    </div>
+                                    <img src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=800&q=80" alt="Event Recap" class="w-full h-full object-cover filter grayscale group-hover:grayscale-[30%] transition-all duration-700">
+                                    <div class="absolute top-4 right-4 z-20">
+                                        <span class="px-3 py-1 text-xs font-semibold bg-dark/80 backdrop-blur-md rounded-full border border-gray-600 text-white">Event Recap</span>
+                                    </div>
+                                </div>
+                                <div class="p-6">
+                                    <div class="flex items-start justify-between">
+                                        <div>
+                                            <h3 class="text-xl font-bold text-gray-200 group-hover:text-white transition-colors mb-1">Event Recap — LKS 2023</h3>
+                                            <p class="text-gray-500 text-sm font-mono">15 November 2023</p>
+                                        </div>
+                                        <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center border border-white/10 group-hover:bg-white group-hover:text-dark group-hover:border-white transition-all duration-300 shrink-0">
+                                            <i class='bx bx-play text-lg'></i>
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-400 text-sm mt-3 leading-relaxed line-clamp-2">A dynamic highlight reel from LKS 2023, capturing the energy, teamwork, and excitement of the national competition.</p>
+                                </div>
+                            </div>
+
+                            <!-- Video Card 3 -->
+                            <div class="glass-card project-card rounded-2xl overflow-hidden cursor-pointer group reveal-up delay-300 open-video-modal"
+                                 data-video-title="Cinematic Travel Vlog"
+                                 data-video-desc="A personal travel vlog documenting a trip through Java's scenic destinations — rice terraces, volcanoes, and coastal towns — shot in a cinematic 16:9 format with color grading."
+                                 data-video-date="5 Juli 2023"
+                                 data-video-url="https://www.youtube.com/embed/dQw4w9WgXcQ"
+                                 data-video-type="youtube">
+                                <div class="relative h-56 overflow-hidden">
+                                    <div class="absolute inset-0 bg-dark/50 group-hover:bg-dark/20 transition-all duration-500 z-10 flex items-center justify-center">
+                                        <div class="w-16 h-16 rounded-full bg-white/10 border border-white/30 flex items-center justify-center group-hover:bg-white group-hover:text-dark transition-all duration-300">
+                                            <i class='bx bx-play text-3xl text-white group-hover:text-dark'></i>
+                                        </div>
+                                    </div>
+                                    <img src="https://images.unsplash.com/photo-1501854140801-50d01698950b?auto=format&fit=crop&w=800&q=80" alt="Travel Vlog" class="w-full h-full object-cover filter grayscale group-hover:grayscale-[30%] transition-all duration-700">
+                                    <div class="absolute top-4 right-4 z-20">
+                                        <span class="px-3 py-1 text-xs font-semibold bg-dark/80 backdrop-blur-md rounded-full border border-gray-600 text-white">Vlog</span>
+                                    </div>
+                                </div>
+                                <div class="p-6">
+                                    <div class="flex items-start justify-between">
+                                        <div>
+                                            <h3 class="text-xl font-bold text-gray-200 group-hover:text-white transition-colors mb-1">Cinematic Travel Vlog</h3>
+                                            <p class="text-gray-500 text-sm font-mono">5 Juli 2023</p>
+                                        </div>
+                                        <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center border border-white/10 group-hover:bg-white group-hover:text-dark group-hover:border-white transition-all duration-300 shrink-0">
+                                            <i class='bx bx-play text-lg'></i>
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-400 text-sm mt-3 leading-relaxed line-clamp-2">A cinematic travel vlog through Java's scenic destinations — rice terraces, volcanoes, and coastal towns.</p>
+                                </div>
+                            </div>
+
+                            <!-- Video Card 4 -->
+                            <div class="glass-card project-card rounded-2xl overflow-hidden cursor-pointer group reveal-up delay-400 open-video-modal"
+                                 data-video-title="Product Promo Video"
+                                 data-video-desc="A 60-second promotional video for a local UMKM product. Includes product close-ups, lifestyle shots, and motion text overlays — edited in a clean, modern style."
+                                 data-video-date="10 September 2023"
+                                 data-video-url="https://www.youtube.com/embed/dQw4w9WgXcQ"
+                                 data-video-type="youtube">
+                                <div class="relative h-56 overflow-hidden">
+                                    <div class="absolute inset-0 bg-dark/50 group-hover:bg-dark/20 transition-all duration-500 z-10 flex items-center justify-center">
+                                        <div class="w-16 h-16 rounded-full bg-white/10 border border-white/30 flex items-center justify-center group-hover:bg-white group-hover:text-dark transition-all duration-300">
+                                            <i class='bx bx-play text-3xl text-white group-hover:text-dark'></i>
+                                        </div>
+                                    </div>
+                                    <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=800&q=80" alt="Promo Video" class="w-full h-full object-cover filter grayscale group-hover:grayscale-[30%] transition-all duration-700">
+                                    <div class="absolute top-4 right-4 z-20">
+                                        <span class="px-3 py-1 text-xs font-semibold bg-dark/80 backdrop-blur-md rounded-full border border-gray-600 text-white">Promo</span>
+                                    </div>
+                                </div>
+                                <div class="p-6">
+                                    <div class="flex items-start justify-between">
+                                        <div>
+                                            <h3 class="text-xl font-bold text-gray-200 group-hover:text-white transition-colors mb-1">Product Promo Video</h3>
+                                            <p class="text-gray-500 text-sm font-mono">10 September 2023</p>
+                                        </div>
+                                        <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center border border-white/10 group-hover:bg-white group-hover:text-dark group-hover:border-white transition-all duration-300 shrink-0">
+                                            <i class='bx bx-play text-lg'></i>
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-400 text-sm mt-3 leading-relaxed line-clamp-2">A 60-second promo for a local UMKM product with close-ups, lifestyle shots, and motion text overlays.</p>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/10 relative z-10 bg-darker">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <div class="text-xl font-bold text-white mb-4">&lt;Dev/&gt;</div>
+            <p class="text-gray-500 text-sm">
+                &copy; <span id="year"></span> Alfauzan Adhim. All rights reserved.<br>
+                Built with <span class="text-white font-medium">HTML</span>, <span class="text-white font-medium">Tailwind</span> & <span class="text-white font-medium">JS</span>.
+            </p>
+        </div>
+    </footer>
+
+    <!-- ===== PHOTO MODAL ===== -->
+    <div class="modal-overlay" id="photo-modal">
+        <div class="modal-inner w-full max-w-4xl my-8 mx-auto">
+            <div class="glass-card rounded-3xl overflow-hidden border border-white/10">
+                <!-- Modal Header -->
+                <div class="flex items-center justify-between p-6 border-b border-white/10">
+                    <div>
+                        <h2 class="text-2xl font-bold text-white" id="photo-modal-title"></h2>
+                        <p class="text-gray-500 text-sm font-mono mt-1" id="photo-modal-date"></p>
+                    </div>
+                    <button id="close-photo-modal" class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white hover:text-dark transition-all duration-300">
+                        <i class='bx bx-x text-xl'></i>
+                    </button>
+                </div>
+                <!-- Modal Body -->
+                <div class="p-6">
+                    <p class="text-gray-400 leading-relaxed mb-6" id="photo-modal-desc"></p>
+                    <!-- Photo Grid -->
+                    <div id="photo-grid" class="media-grid mb-4"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== VIDEO MODAL ===== -->
+    <div class="modal-overlay" id="video-modal">
+        <div class="modal-inner w-full max-w-3xl my-8 mx-auto">
+            <div class="glass-card rounded-3xl overflow-hidden border border-white/10">
+                <!-- Modal Header -->
+                <div class="flex items-center justify-between p-6 border-b border-white/10">
+                    <div>
+                        <h2 class="text-2xl font-bold text-white" id="video-modal-title"></h2>
+                        <p class="text-gray-500 text-sm font-mono mt-1" id="video-modal-date"></p>
+                    </div>
+                    <button id="close-video-modal" class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white hover:text-dark transition-all duration-300">
+                        <i class='bx bx-x text-xl'></i>
+                    </button>
+                </div>
+                <!-- Modal Body -->
+                <div class="p-6">
+                    <div class="video-wrapper mb-6" id="video-embed-wrapper">
+                        <iframe id="video-embed" src="" allowfullscreen title="Video Player"></iframe>
+                    </div>
+                    <p class="text-gray-400 leading-relaxed" id="video-modal-desc"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== LIGHTBOX ===== -->
+    <div class="lightbox" id="lightbox">
+        <button id="lightbox-prev" class="absolute left-4 z-10 w-12 h-12 rounded-full bg-white/10 border border-white/20 flex items-center justify-center hover:bg-white hover:text-dark transition-all duration-300 text-white">
+            <i class='bx bx-chevron-left text-2xl'></i>
+        </button>
+        <div class="flex flex-col items-center gap-4 px-16">
+            <img id="lightbox-img" src="" alt="" class="max-w-full max-h-[80vh] object-contain rounded-lg">
+            <div class="text-center">
+                <p class="text-white font-medium" id="lightbox-caption"></p>
+                <p class="text-gray-500 text-sm font-mono mt-1" id="lightbox-date"></p>
+            </div>
+            <p class="text-gray-600 text-xs" id="lightbox-counter"></p>
+        </div>
+        <button id="lightbox-next" class="absolute right-4 z-10 w-12 h-12 rounded-full bg-white/10 border border-white/20 flex items-center justify-center hover:bg-white hover:text-dark transition-all duration-300 text-white">
+            <i class='bx bx-chevron-right text-2xl'></i>
+        </button>
+        <button id="lightbox-close" class="absolute top-6 right-6 z-10 w-12 h-12 rounded-full bg-white/10 border border-white/20 flex items-center justify-center hover:bg-white hover:text-dark transition-all duration-300 text-white">
+            <i class='bx bx-x text-2xl'></i>
+        </button>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Year
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // Mobile Menu
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuIcon = mobileMenuBtn.querySelector('i');
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            menuIcon.className = mobileMenu.classList.contains('hidden') ? 'bx bx-menu text-3xl' : 'bx bx-x text-3xl';
+        });
+
+        // Main Tabs
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabPanels = document.querySelectorAll('.tab-panel');
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabPanels.forEach(p => p.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+            });
+        });
+
+        // Subtabs
+        const subtabBtns = document.querySelectorAll('.subtab-btn');
+        const subtabPanels = document.querySelectorAll('.subtab-panel');
+        subtabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                subtabBtns.forEach(b => b.classList.remove('active'));
+                subtabPanels.forEach(p => p.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById('subtab-' + btn.dataset.subtab).classList.add('active');
+            });
+        });
+
+        // ===== PHOTO MODAL =====
+        const photoModal = document.getElementById('photo-modal');
+        const photoGrid = document.getElementById('photo-grid');
+        let currentPhotos = [];
+        let currentPhotoIndex = 0;
+
+        document.querySelectorAll('.open-photo-modal').forEach(card => {
+            card.addEventListener('click', () => {
+                const title = card.dataset.albumTitle;
+                const desc = card.dataset.albumDesc;
+                const photos = JSON.parse(card.dataset.photos);
+
+                document.getElementById('photo-modal-title').textContent = title;
+                document.getElementById('photo-modal-desc').textContent = desc;
+
+                // Build grid
+                photoGrid.innerHTML = '';
+                photos.forEach((photo, i) => {
+                    const div = document.createElement('div');
+                    div.className = 'media-item';
+                    div.innerHTML = `
+                        <img src="${photo.src}" alt="${photo.caption}" loading="lazy">
+                        <div class="overlay">
+                            <span class="text-white text-xs font-medium truncate">${photo.caption}</span>
+                        </div>
+                    `;
+                    div.addEventListener('click', () => openLightbox(photos, i));
+                    photoGrid.appendChild(div);
+                });
+
+                // Set date from first photo
+                document.getElementById('photo-modal-date').textContent = photos.map(p => p.date).join('  ·  ');
+
+                currentPhotos = photos;
+                photoModal.classList.add('open');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        document.getElementById('close-photo-modal').addEventListener('click', closePhotoModal);
+        photoModal.addEventListener('click', (e) => { if (e.target === photoModal) closePhotoModal(); });
+
+        function closePhotoModal() {
+            photoModal.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        // ===== VIDEO MODAL =====
+        const videoModal = document.getElementById('video-modal');
+        const videoEmbed = document.getElementById('video-embed');
+
+        document.querySelectorAll('.open-video-modal').forEach(card => {
+            card.addEventListener('click', () => {
+                document.getElementById('video-modal-title').textContent = card.dataset.videoTitle;
+                document.getElementById('video-modal-desc').textContent = card.dataset.videoDesc;
+                document.getElementById('video-modal-date').textContent = card.dataset.videoDate;
+                videoEmbed.src = card.dataset.videoUrl;
+                videoModal.classList.add('open');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        document.getElementById('close-video-modal').addEventListener('click', closeVideoModal);
+        videoModal.addEventListener('click', (e) => { if (e.target === videoModal) closeVideoModal(); });
+
+        function closeVideoModal() {
+            videoModal.classList.remove('open');
+            videoEmbed.src = '';
+            document.body.style.overflow = '';
+        }
+
+        // ===== LIGHTBOX =====
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        const lightboxCaption = document.getElementById('lightbox-caption');
+        const lightboxDate = document.getElementById('lightbox-date');
+        const lightboxCounter = document.getElementById('lightbox-counter');
+
+        function openLightbox(photos, index) {
+            currentPhotos = photos;
+            currentPhotoIndex = index;
+            updateLightbox();
+            lightbox.classList.add('open');
+        }
+
+        function updateLightbox() {
+            const photo = currentPhotos[currentPhotoIndex];
+            lightboxImg.src = photo.src;
+            lightboxCaption.textContent = photo.caption;
+            lightboxDate.textContent = photo.date;
+            lightboxCounter.textContent = `${currentPhotoIndex + 1} / ${currentPhotos.length}`;
+        }
+
+        document.getElementById('lightbox-prev').addEventListener('click', (e) => {
+            e.stopPropagation();
+            currentPhotoIndex = (currentPhotoIndex - 1 + currentPhotos.length) % currentPhotos.length;
+            updateLightbox();
+        });
+
+        document.getElementById('lightbox-next').addEventListener('click', (e) => {
+            e.stopPropagation();
+            currentPhotoIndex = (currentPhotoIndex + 1) % currentPhotos.length;
+            updateLightbox();
+        });
+
+        document.getElementById('lightbox-close').addEventListener('click', () => {
+            lightbox.classList.remove('open');
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) lightbox.classList.remove('open');
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (lightbox.classList.contains('open')) {
+                if (e.key === 'ArrowLeft') {
+                    currentPhotoIndex = (currentPhotoIndex - 1 + currentPhotos.length) % currentPhotos.length;
+                    updateLightbox();
+                } else if (e.key === 'ArrowRight') {
+                    currentPhotoIndex = (currentPhotoIndex + 1) % currentPhotos.length;
+                    updateLightbox();
+                } else if (e.key === 'Escape') {
+                    lightbox.classList.remove('open');
+                }
+            }
+            if (photoModal.classList.contains('open') && e.key === 'Escape') closePhotoModal();
+            if (videoModal.classList.contains('open') && e.key === 'Escape') closeVideoModal();
+        });
+    });
+    </script>
+</body>
+</html>
