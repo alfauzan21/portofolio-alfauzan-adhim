@@ -1,16 +1,19 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Loading Screen
+    // 1. Loading Screen (guarded - element may not exist in markup)
     const loader = document.getElementById('loader');
-    
-    // Simulate loading time
-    setTimeout(() => {
-        loader.style.opacity = '0';
+
+    if (loader) {
         setTimeout(() => {
-            loader.style.display = 'none';
-            // Trigger first reveal after loader is gone
-            reveal();
-        }, 500);
-    }, 1500);
+            loader.style.opacity = '0';
+            setTimeout(() => {
+                loader.style.display = 'none';
+                reveal();
+            }, 500);
+        }, 1500);
+    } else {
+        // No loader element present, just run the first reveal pass immediately
+        reveal();
+    }
 
     // 2. Set Current Year in Footer
     document.getElementById('year').textContent = new Date().getFullYear();
@@ -115,6 +118,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.addEventListener('scroll', reveal);
+    // Run once immediately so above-the-fold content (and skill bars) animate on load
+    reveal();
 
     // 7. Parallax Effect for Abstract Mesh Background
     const parallax1 = document.getElementById('parallax-1');
