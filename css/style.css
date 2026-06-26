@@ -289,3 +289,316 @@ body {
     animation: none;
   }
 }
+
+/* ===================================================== */
+/* Toast Notifications & Light Mode Styling & Table overrides */
+/* ===================================================== */
+
+/* Toast styling */
+.toast-container {
+  position: fixed;
+  top: 5.5rem; /* below navbar */
+  right: 1.5rem;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-width: 380px;
+  width: calc(100% - 3rem);
+  pointer-events: none;
+}
+
+.toast {
+  pointer-events: auto;
+  background: rgba(10, 10, 10, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #fff;
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  transform: translateX(120%);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;
+  opacity: 0;
+}
+
+.toast.show {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.toast i {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.toast-success {
+  border-left: 4px solid #ffffff;
+}
+
+.toast-error {
+  border-left: 4px solid #ef4444;
+}
+
+/* Theme Switch Button styles */
+.theme-toggle-btn {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.02);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.theme-toggle-btn:hover {
+  background: #fff;
+  color: #000;
+  border-color: #fff;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.15);
+}
+
+/* Light Mode Overrides */
+html.light {
+  scrollbar-color: #000000 #f3f4f6;
+}
+
+html.light ::-webkit-scrollbar-track {
+  background: #f3f4f6;
+}
+
+html.light ::-webkit-scrollbar-thumb {
+  background: #cccccc;
+}
+html.light ::-webkit-scrollbar-thumb:hover {
+  background: #000000;
+}
+
+html.light body {
+  background-color: #fafafa;
+  color: #1f2937;
+}
+
+html.light .bg-dark,
+html.light .bg-dark\/70,
+html.light .bg-dark\/50,
+html.light .bg-dark\/95 {
+  background-color: rgba(250, 250, 250, 0.85);
+}
+
+html.light .bg-darker,
+html.light .fixed.inset-0.bg-black {
+  background-color: #f3f4f6;
+}
+
+html.light .bg-black {
+  background-color: #ffffff;
+}
+
+html.light .text-white,
+html.light nav span.text-white {
+  color: #050505;
+}
+
+html.light .text-gray-300 {
+  color: #374151;
+}
+
+html.light .text-gray-400 {
+  color: #4b5563;
+}
+
+html.light .text-gray-500 {
+  color: #6b7280;
+}
+
+html.light .text-gray-600 {
+  color: #6b7280;
+}
+
+html.light .glass-card {
+  background: rgba(0, 0, 0, 0.02);
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
+  color: #374151;
+}
+
+html.light .border-glass_border,
+html.light .border-white\/10,
+html.light .border-gray-800,
+html.light .border-gray-700,
+html.light .border-gray-600 {
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+html.light .bg-white\/5 {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+html.light .bg-white\/10 {
+  background-color: rgba(0, 0, 0, 0.06);
+}
+
+html.light .glow-text {
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
+}
+
+html.light .film-grain {
+  opacity: 0.04;
+}
+
+html.light .theme-toggle-btn {
+  border-color: rgba(0, 0, 0, 0.15);
+  background: rgba(0, 0, 0, 0.02);
+  color: #000;
+}
+html.light .theme-toggle-btn:hover {
+  background: #000;
+  color: #fff;
+  border-color: #000;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+html.light .skill-progress-track {
+  background-color: #e5e7eb;
+}
+html.light .skill-progress-fill {
+  background-color: #000000;
+}
+
+html.light .bg-white {
+  background-color: #000000;
+  color: #ffffff;
+}
+html.light .bg-white:hover {
+  background-color: #333333;
+}
+html.light .text-dark {
+  color: #ffffff;
+}
+
+html.light .hover\:shadow-white-glow:hover {
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+html.light .hover\:border-white:hover {
+  border-color: #000000;
+}
+html.light .hover\:text-white:hover {
+  color: #000000;
+}
+html.light .hover\:bg-white:hover {
+  background-color: #000000;
+  color: #ffffff;
+}
+
+html.light .border-l-2.border-gray-800 {
+  border-color: #e5e7eb;
+}
+
+html.light .relative.rounded-full.bg-dark {
+  background-color: #ffffff;
+  border-color: #e5e7eb;
+}
+
+html.light .relative.rounded-full.bg-white {
+  background-color: #000000;
+}
+
+html.light .marquee-item {
+  background: rgba(0, 0, 0, 0.02);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+html.light .toast {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: #000;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+html.light .toast-success {
+  border-left: 4px solid #000000;
+}
+
+/* Modal Overlay light style */
+html.light .modal-overlay {
+  background: rgba(255, 255, 255, 0.92);
+}
+
+/* Form input text for light mode */
+html.light input, 
+html.light textarea, 
+html.light select {
+  background-color: #ffffff !important;
+  border-color: #d1d5db !important;
+  color: #111827 !important;
+}
+html.light input::placeholder, 
+html.light textarea::placeholder {
+  color: #9ca3af !important;
+}
+
+/* Active states in light mode */
+html.light .nav-link.active {
+  color: #000000;
+}
+html.light .nav-link.active span {
+  background-color: #000000;
+}
+
+/* Table styling */
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.admin-table th, .admin-table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+html.light .admin-table th, html.light .admin-table td {
+  border-bottom-color: rgba(0, 0, 0, 0.07);
+}
+
+/* Loading Spinner */
+.spinner {
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border-left-color: #fff;
+  animation: spin-slow 1s linear infinite;
+}
+html.light .spinner {
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #000;
+}
+
+/* Modal Overlay Styling */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  overflow-y: auto;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.modal-overlay.open {
+  display: flex;
+}
+
+.modal-overlay > div {
+  margin: auto;
+}
+

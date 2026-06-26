@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Portfolio Manager</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <!-- Boxicons -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    },
+                    colors: {
+                        dark: '#050505',
+                        darker: '#000000',
+                        glass: 'rgba(255, 255, 255, 0.02)',
+                        glass_border: 'rgba(255, 255, 255, 0.1)'
+                    },
+                    boxShadow: {
+                        'white-glow': '0 0 15px rgba(255, 255, 255, 0.15)',
+                        'white-glow-strong': '0 0 20px rgba(255, 255, 255, 0.3)',
+                        'glass': '0 4px 30px rgba(0, 0, 0, 0.5)',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Form focused state styles for high premium look */
+        .form-input:focus {
+            outline: none;
+            border-color: #ffffff;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+        }
+        html.light .form-input:focus {
+            border-color: #000000;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body class="bg-dark text-gray-300 font-sans overflow-x-hidden antialiased selection:bg-white selection:text-dark">
+
+    <!-- Fluid Abstract Mesh Background -->
+    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden bg-black">
+        <!-- Parallax Wrappers -->
+        <div id="parallax-1" class="absolute inset-0 transition-transform duration-1000 ease-out"><div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-white opacity-[0.06] rounded-full blur-[120px] mix-blend-screen animate-mesh-1"></div></div>
+        <div id="parallax-2" class="absolute inset-0 transition-transform duration-1000 ease-out"><div class="absolute bottom-[-10%] right-[-10%] w-[60vw] h-[60vw] bg-white opacity-[0.04] rounded-full blur-[150px] mix-blend-screen animate-mesh-2"></div></div>
+        <!-- Film Grain Texture -->
+        <div class="absolute inset-0 z-10 opacity-20 pointer-events-none film-grain"></div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 transition-all duration-300 backdrop-blur-md bg-dark/70 border-b border-white/10" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer relative group" onclick="window.location.href='index.html'">
+                    <span class="text-2xl font-bold text-white transition-colors duration-300 group-hover:text-gray-300">&lt;Dev/&gt;</span>
+                    <span class="text-xs font-mono bg-white/10 border border-white/20 text-white px-2 py-0.5 rounded-md">ADMIN</span>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="nav-link text-gray-400 hover:text-white transition-colors text-sm font-medium uppercase tracking-wider relative group">
+                        Portfolio Home
+                        <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-white transition-all duration-300 group-hover:w-full"></span>
+                    </a>
+                    <a href="projects.html" class="nav-link text-gray-400 hover:text-white transition-colors text-sm font-medium uppercase tracking-wider relative group">
+                        Projects List
+                        <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-white transition-all duration-300 group-hover:w-full"></span>
+                    </a>
+                    <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle Theme">
+                        <i class='bx bx-sun text-xl'></i>
+                    </button>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center gap-4">
+                    <button id="theme-toggle-mobile" class="text-gray-300 hover:text-white focus:outline-none">
+                        <i class='bx bx-sun text-2xl'></i>
+                    </button>
+                    <button id="mobile-menu-btn" class="text-gray-300 hover:text-white focus:outline-none transition-colors">
+                        <i class='bx bx-menu text-3xl'></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-dark/95 backdrop-blur-xl border-b border-white/10 absolute w-full shadow-2xl">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 flex flex-col items-center">
+                <a href="index.html" class="mobile-link block px-3 py-2 text-base font-medium text-gray-400 hover:text-white">Portfolio Home</a>
+                <a href="projects.html" class="mobile-link block px-3 py-2 text-base font-medium text-gray-400 hover:text-white">Projects List</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="relative z-10 pt-28 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        
+        <!-- Header Section -->
+        <div class="mb-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+                <h1 class="text-3xl md:text-5xl font-bold text-white glow-text mb-2">Project Management</h1>
+                <p class="text-gray-500">Kelola data project portfolio Anda yang tersimpan di Local Storage.</p>
+            </div>
+            <div class="flex flex-wrap gap-3">
+                <button id="btn-export" class="px-4 py-2 text-sm font-semibold rounded-xl border border-white/10 bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white transition-all duration-300 flex items-center gap-2">
+                    <i class='bx bx-export text-lg'></i> Export JSON
+                </button>
+                <button id="btn-import-trigger" class="px-4 py-2 text-sm font-semibold rounded-xl border border-white/10 bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white transition-all duration-300 flex items-center gap-2">
+                    <i class='bx bx-import text-lg'></i> Import JSON
+                </button>
+                <input type="file" id="import-file-input" accept=".json" class="hidden">
+                <button id="btn-reset-db" class="px-4 py-2 text-sm font-semibold rounded-xl border border-red-900/30 bg-red-950/20 text-red-400 hover:bg-red-950/40 hover:border-red-500 hover:text-red-300 transition-all duration-300 flex items-center gap-2">
+                    <i class='bx bx-reset text-lg'></i> Reset Database
+                </button>
+            </div>
+        </div>
+
+        <!-- Statistics Panel -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+            <div class="glass-card p-6 rounded-2xl border border-white/5 hover:border-white/20 transition-all duration-300">
+                <p class="text-xs text-gray-500 font-mono uppercase tracking-wider mb-2">Total Project</p>
+                <h3 id="stat-total" class="text-3xl font-extrabold text-white">0</h3>
+            </div>
+            <div class="glass-card p-6 rounded-2xl border border-white/5 hover:border-white/20 transition-all duration-300">
+                <p class="text-xs text-gray-500 font-mono uppercase tracking-wider mb-2">Project Selesai</p>
+                <h3 id="stat-selesai" class="text-3xl font-extrabold text-white">0</h3>
+            </div>
+            <div class="glass-card p-6 rounded-2xl border border-white/5 hover:border-white/20 transition-all duration-300">
+                <p class="text-xs text-gray-500 font-mono uppercase tracking-wider mb-2">On Progress</p>
+                <h3 id="stat-progress" class="text-3xl font-extrabold text-white">0</h3>
+            </div>
+            <div class="glass-card p-6 rounded-2xl border border-white/5 hover:border-white/20 transition-all duration-300">
+                <p class="text-xs text-gray-500 font-mono uppercase tracking-wider mb-2">Kategori Utama</p>
+                <h3 id="stat-top-category" class="text-xl font-extrabold text-white truncate">-</h3>
+            </div>
+        </div>
+
+        <!-- Table Controls & Table Container -->
+        <div class="glass-card rounded-2xl border border-white/10 overflow-hidden mb-6">
+            <!-- Table Controls -->
+            <div class="p-6 border-b border-white/10 flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4 bg-black/20">
+                <div class="flex flex-col sm:flex-row gap-3 flex-1">
+                    <div class="relative flex-1">
+                        <i class='bx bx-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-lg'></i>
+                        <input type="text" id="search-input" placeholder="Cari berdasarkan nama..." class="w-full pl-11 pr-4 py-2.5 rounded-xl border border-white/10 bg-white/5 text-gray-300 text-sm focus:border-white focus:bg-black/40 transition-all duration-300">
+                    </div>
+                    <select id="filter-category" class="px-4 py-2.5 rounded-xl border border-white/10 bg-white/5 text-gray-300 text-sm focus:border-white transition-all duration-300">
+                        <option value="">Semua Kategori</option>
+                        <option value="Web Development">Web Development</option>
+                        <option value="Mobile App">Mobile App</option>
+                        <option value="UI/UX Design">UI/UX Design</option>
+                        <option value="Fotografer">Fotografer (Multimedia)</option>
+                        <option value="Videografer">Videografer (Multimedia)</option>
+                    </select>
+                    <select id="filter-status" class="px-4 py-2.5 rounded-xl border border-white/10 bg-white/5 text-gray-300 text-sm focus:border-white transition-all duration-300">
+                        <option value="">Semua Status</option>
+                        <option value="Selesai">Selesai</option>
+                        <option value="On Progress">On Progress</option>
+                    </select>
+                </div>
+                <button id="btn-add-project" class="px-6 py-2.5 bg-white text-dark hover:bg-gray-200 rounded-xl font-semibold text-sm transition-all duration-300 flex items-center justify-center gap-2 hover:shadow-white-glow">
+                    <i class='bx bx-plus text-lg'></i> Tambah Project
+                </button>
+            </div>
+
+            <!-- Table Container -->
+            <div class="overflow-x-auto min-h-[300px]">
+                <table class="admin-table">
+                    <thead>
+                        <tr class="text-xs font-mono uppercase tracking-wider text-gray-500 border-b border-white/10 bg-black/40">
+                            <th class="w-20">Thumbnail</th>
+                            <th>Nama Project</th>
+                            <th>Kategori</th>
+                            <th>Tanggal</th>
+                            <th>Status</th>
+                            <th class="w-32 text-right">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="projects-table-body" class="divide-y divide-white/5">
+                        <!-- Rendered dynamically -->
+                    </tbody>
+                </table>
+
+                <!-- Loading State overlay (hidden by default) -->
+                <div id="table-loading" class="hidden py-20 flex flex-col items-center justify-center gap-3">
+                    <div class="spinner"></div>
+                    <span class="text-sm font-mono text-gray-500">Memuat data...</span>
+                </div>
+
+                <!-- Empty State (hidden by default) -->
+                <div id="table-empty" class="hidden py-20 flex flex-col items-center justify-center gap-3 text-center">
+                    <i class='bx bx-folder-open text-5xl text-gray-600'></i>
+                    <h3 class="text-lg font-bold text-gray-400">Tidak Ada Project</h3>
+                    <p class="text-xs text-gray-600 max-w-xs">Belum ada project yang ditambahkan atau pencarian Anda tidak menemukan hasil.</p>
+                </div>
+            </div>
+
+            <!-- Pagination Grid Footer -->
+            <div id="pagination-container" class="p-6 border-t border-white/10 flex justify-between items-center bg-black/10">
+                <span id="pagination-info" class="text-xs font-mono text-gray-500">Menampilkan 1-10 dari 10 project</span>
+                <div class="flex items-center gap-2">
+                    <button id="btn-prev-page" class="w-8 h-8 rounded-lg border border-white/10 hover:border-white hover:text-white transition-colors flex items-center justify-center text-gray-400 disabled:opacity-30 disabled:pointer-events-none">
+                        <i class='bx bx-chevron-left text-lg'></i>
+                    </button>
+                    <div id="page-numbers-container" class="flex gap-1">
+                        <!-- Dynamic page links -->
+                    </div>
+                    <button id="btn-next-page" class="w-8 h-8 rounded-lg border border-white/10 hover:border-white hover:text-white transition-colors flex items-center justify-center text-gray-400 disabled:opacity-30 disabled:pointer-events-none">
+                        <i class='bx bx-chevron-right text-lg'></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/10 relative z-10 bg-darker">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <div class="text-xl font-bold text-white mb-2">&lt;Dev/&gt;</div>
+            <p class="text-gray-500 text-sm">
+                &copy; <span id="year"></span> Alfauzan Adhim. Admin Dashboard Panel. Offline-first local storage.
+            </p>
+        </div>
+    </footer>
+
+    <!-- ========================================== -->
+    <!-- CRUD Add/Edit Project Modal Popup         -->
+    <!-- ========================================== -->
+    <div id="project-modal" class="modal-overlay">
+        <div class="glass-card w-full max-w-2xl rounded-2xl border border-white/15 my-8 relative overflow-hidden flex flex-col shadow-2xl max-h-[90vh]">
+            <!-- Header -->
+            <div class="p-6 border-b border-white/10 flex justify-between items-center bg-black/40">
+                <h3 id="modal-title" class="text-xl font-bold text-white">Tambah Project Baru</h3>
+                <button class="modal-close-btn w-8 h-8 rounded-lg border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:border-white transition-colors">
+                    <i class='bx bx-x text-xl'></i>
+                </button>
+            </div>
+            <!-- Form Inner Scroll Area -->
+            <form id="project-form" class="modal-inner p-6 overflow-y-auto flex-1 space-y-5">
+                <input type="hidden" id="form-project-id">
+                
+                <!-- Project Name -->
+                <div>
+                    <label for="form-name" class="block text-xs font-mono uppercase tracking-wider text-gray-400 mb-1.5">Nama Project <span class="text-red-500">*</span></label>
+                    <input type="text" id="form-name" placeholder="Contoh: E-Commerce Web App" required class="form-input w-full px-4 py-2.5 rounded-xl border border-white/10 bg-white/5 text-white text-sm transition-all duration-300">
+                </div>
+
+                <!-- Grid Row: Category & Status -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label for="form-category" class="block text-xs font-mono uppercase tracking-wider text-gray-400 mb-1.5">Kategori <span class="text-red-500">*</span></label>
+                        <select id="form-category" required class="form-input w-full px-4 py-2.5 rounded-xl border border-white/10 bg-white/5 text-white text-sm transition-all duration-300">
+                            <option value="" disabled selected>Pilih Kategori</option>
+                            <option value="Web Development">Web Development</option>
+                            <option value="Mobile App">Mobile App</option>
+                            <option value="UI/UX Design">UI/UX Design</option>
+                            <option value="Fotografer">Fotografer (Multimedia)</option>
+                            <option value="Videografer">Videografer (Multimedia)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="form-status" class="block text-xs font-mono uppercase tracking-wider text-gray-400 mb-1.5">Status <span class="text-red-500">*</span></label>
+                        <select id="form-status" required class="form-input w-full px-4 py-2.5 rounded-xl border border-white/10 bg-white/5 text-white text-sm transition-all duration-300">
+                            <option value="Selesai">Selesai</option>
+                            <option value="On Progress">On Progress</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div>
+                    <label for="form-description" class="block text-xs font-mono uppercase tracking-wider text-gray-400 mb-1.5">Deskripsi Singkat <span class="text-red-500">*</span></label>
+                    <textarea id="form-description" rows="3" placeholder="Jelaskan secara singkat mengenai project Anda..." required class="form-input w-full px-4 py-2.5 rounded-xl border border-white/10 bg-white/5 text-white text-sm transition-all duration-300 resize-none"></textarea>
+                </div>
+
+                <!-- Technologies -->
+                <div>
+                    <label for="form-tech" class="block text-xs font-mono uppercase tracking-wider text-gray-400 mb-1.5">Teknologi yang digunakan <span class="text-red-500">*</span></label>
+                    <input type="text" id="form-tech" placeholder="Pisahkan dengan koma (Contoh: React, Tailwind CSS, Laravel)" required class="form-input w-full px-4 py-2.5 rounded-xl border border-white/10 bg-white/5 text-white text-sm transition-all duration-300">
+                </div>
+
+                <!-- Grid Row: Demo & GitHub URLs -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label for="form-demo" class="block text-xs font-mono uppercase tracking-wider text-gray-400 mb-1.5">Link Demo</label>
+                        <input type="url" id="form-demo" placeholder="https://example.com/demo" class="form-input w-full px-4 py-2.5 rounded-xl border border-white/10 bg-white/5 text-white text-sm transition-all duration-300">
+                    </div>
+                    <div>
+                        <label for="form-github" class="block text-xs font-mono uppercase tracking-wider text-gray-400 mb-1.5">Link GitHub</label>
+                        <input type="url" id="form-github" placeholder="https://github.com/user/repo" class="form-input w-full px-4 py-2.5 rounded-xl border border-white/10 bg-white/5 text-white text-sm transition-all duration-300">
+                    </div>
+                </div>
+
+                <!-- Grid Row: Date & Thumbnail File Upload -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label for="form-date" class="block text-xs font-mono uppercase tracking-wider text-gray-400 mb-1.5">Tanggal Project <span class="text-red-500">*</span></label>
+                        <input type="date" id="form-date" required class="form-input w-full px-4 py-2.5 rounded-xl border border-white/10 bg-white/5 text-white text-sm transition-all duration-300">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-mono uppercase tracking-wider text-gray-400 mb-1.5">Upload Thumbnail</label>
+                        <label for="form-thumbnail" class="w-full flex items-center justify-between px-4 py-2 rounded-xl border border-white/10 bg-white/5 text-gray-400 text-sm hover:border-white/50 cursor-pointer transition-all duration-300">
+                            <span id="thumbnail-filename" class="truncate max-w-[200px]">Pilih file gambar...</span>
+                            <i class='bx bx-upload text-lg'></i>
+                        </label>
+                        <input type="file" id="form-thumbnail" accept="image/*" class="hidden">
+                    </div>
+                </div>
+
+                <!-- Thumbnail Preview Display -->
+                <div id="thumbnail-preview-container" class="hidden mt-2 border border-white/10 rounded-xl overflow-hidden relative group max-h-48 bg-black">
+                    <img id="thumbnail-preview-img" src="" alt="Preview" class="w-full h-full object-cover">
+                    <button type="button" id="btn-remove-thumbnail" class="absolute top-2 right-2 w-8 h-8 rounded-lg bg-black/80 hover:bg-red-600 hover:text-white border border-white/20 flex items-center justify-center transition-colors text-gray-300">
+                        <i class='bx bx-trash text-lg'></i>
+                    </button>
+                </div>
+
+                <!-- Video URL field (Only for Videografer category) -->
+                <div id="video-url-field-container" class="hidden">
+                    <label for="form-video-url" class="block text-xs font-mono uppercase tracking-wider text-gray-400 mb-1.5">Video Embed URL (Khusus Videografer) <span class="text-red-500">*</span></label>
+                    <input type="text" id="form-video-url" placeholder="Contoh: https://www.youtube.com/embed/dQw4w9WgXcQ" class="form-input w-full px-4 py-2.5 rounded-xl border border-white/10 bg-white/5 text-white text-sm transition-all duration-300">
+                </div>
+
+                <!-- Photo Album Editor (Only for Fotografer category) -->
+                <div id="photo-album-editor-container" class="hidden border border-white/10 p-4 rounded-xl space-y-4 bg-black/20">
+                    <div class="flex justify-between items-center">
+                        <span class="block text-xs font-mono uppercase tracking-wider text-gray-400">Daftar Foto Album</span>
+                        <span id="album-photo-counter" class="text-xs font-mono text-gray-500">0 Foto</span>
+                    </div>
+                    <div id="album-photos-list" class="space-y-3 max-h-48 overflow-y-auto pr-2">
+                        <!-- Dynamic list of photo items -->
+                    </div>
+                    <button type="button" id="btn-add-album-photo" class="w-full py-2 bg-white/5 border border-dashed border-white/20 text-gray-300 rounded-xl text-xs font-semibold hover:border-white hover:text-white transition-all flex items-center justify-center gap-1">
+                        <i class='bx bx-plus-circle text-base'></i> Tambah Foto Ke Album
+                    </button>
+                    <input type="file" id="album-photo-file-input" accept="image/*" class="hidden">
+                </div>
+            </form>
+            <!-- Actions Footer -->
+            <div class="p-6 border-t border-white/10 bg-black/40 flex justify-end gap-3">
+                <button type="button" class="modal-close-btn px-6 py-2.5 rounded-xl border border-white/10 hover:border-white hover:text-white font-semibold text-sm transition-colors">Batal</button>
+                <button type="submit" form="project-form" class="px-6 py-2.5 bg-white text-dark hover:bg-gray-200 font-semibold text-sm rounded-xl transition-colors hover:shadow-white-glow">Simpan Project</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- Custom Dialog: Delete Confirmation Modal   -->
+    <!-- ========================================== -->
+    <div id="confirm-modal" class="modal-overlay">
+        <div class="glass-card w-full max-w-md rounded-2xl border border-white/15 p-6 shadow-2xl flex flex-col text-center items-center justify-center my-auto">
+            <div class="w-16 h-16 rounded-full bg-red-950/20 border border-red-500/30 flex items-center justify-center text-red-500 text-3xl mb-4">
+                <i class='bx bx-error-circle'></i>
+            </div>
+            <h3 id="confirm-title" class="text-xl font-bold text-white mb-2">Hapus Project?</h3>
+            <p id="confirm-desc" class="text-sm text-gray-500 mb-6 leading-relaxed">Apakah Anda yakin ingin menghapus project ini? Tindakan ini tidak dapat dibatalkan.</p>
+            <div class="flex gap-3 w-full">
+                <button id="btn-confirm-cancel" class="flex-1 px-5 py-2.5 rounded-xl border border-white/10 hover:border-white hover:text-white font-semibold text-sm transition-colors">Batal</button>
+                <button id="btn-confirm-ok" class="flex-1 px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white font-semibold text-sm rounded-xl transition-colors">Hapus</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- Custom Dialog: Reset DB Confirmation Modal -->
+    <!-- ========================================== -->
+    <div id="reset-confirm-modal" class="modal-overlay">
+        <div class="glass-card w-full max-w-md rounded-2xl border border-white/15 p-6 shadow-2xl flex flex-col text-center items-center justify-center my-auto">
+            <div class="w-16 h-16 rounded-full bg-red-950/20 border border-red-500/30 flex items-center justify-center text-red-500 text-3xl mb-4">
+                <i class='bx bx-reset'></i>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-2">Reset Semua Data?</h3>
+            <p class="text-sm text-gray-500 mb-6 leading-relaxed">Tindakan ini akan mengembalikan data portfolio ke proyek bawaan awal. Seluruh project baru yang Anda buat akan terhapus.</p>
+            <div class="flex gap-3 w-full">
+                <button id="btn-reset-cancel" class="flex-1 px-5 py-2.5 rounded-xl border border-white/10 hover:border-white hover:text-white font-semibold text-sm transition-colors">Batal</button>
+                <button id="btn-reset-ok" class="flex-1 px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white font-semibold text-sm rounded-xl transition-colors">Reset Data</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- Toast Notification Container Placeholder   -->
+    <!-- ========================================== -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="js/project-store.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>
