@@ -502,6 +502,25 @@
             });
         });
 
+        // Hash Routing
+        function handleHashRoute() {
+            const hash = window.location.hash;
+            if (hash === '#multimedia' || hash === '#foto') {
+                const btn = document.querySelector('.tab-btn[data-tab="multimedia"]');
+                if (btn) btn.click();
+                const subbtn = document.querySelector('.subtab-btn[data-subtab="foto"]');
+                if (subbtn) subbtn.click();
+            } else if (hash === '#video') {
+                const btn = document.querySelector('.tab-btn[data-tab="multimedia"]');
+                if (btn) btn.click();
+                const subbtn = document.querySelector('.subtab-btn[data-subtab="video"]');
+                if (subbtn) subbtn.click();
+            }
+        }
+        
+        handleHashRoute();
+        window.addEventListener('hashchange', handleHashRoute);
+
         // ===== PHOTO MODAL =====
         const photoModal = document.getElementById('photo-modal');
         const photoGrid = document.getElementById('photo-grid');

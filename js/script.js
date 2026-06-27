@@ -214,6 +214,22 @@ document.addEventListener('DOMContentLoaded', () => {
                     `<span class="px-3 py-1 text-xs font-semibold bg-dark/80 backdrop-blur-md rounded-full border border-gray-600 text-white">${t}</span>`
                 ).join('');
 
+                let actionButtonsHTML = '';
+                if (proj.category === 'Fotografer' || proj.category === 'Videografer') {
+                    const buttonText = proj.category === 'Fotografer' ? 'Lihat Foto' : 'Lihat Video';
+                    const targetHash = proj.category === 'Fotografer' ? '#foto' : '#video';
+                    actionButtonsHTML = `
+                        <a href="projects.html${targetHash}" class="flex-1 text-center px-4 py-2 bg-white text-dark hover:bg-gray-200 rounded-lg text-sm font-medium transition-all duration-300 hover:shadow-white-glow">${buttonText}</a>
+                    `;
+                } else {
+                    actionButtonsHTML = `
+                        <a href="${proj.demoUrl}" ${proj.demoUrl !== '#' ? 'target="_blank"' : ''} class="flex-1 text-center px-4 py-2 bg-white/5 hover:bg-white hover:text-dark border border-gray-700 hover:border-white rounded-lg text-sm font-medium transition-all duration-300">Live Demo</a>
+                        <a href="${proj.githubUrl}" ${proj.githubUrl !== '#' ? 'target="_blank"' : ''} class="flex items-center justify-center w-10 h-10 bg-white/5 hover:bg-white hover:text-dark border border-gray-700 rounded-lg transition-all duration-300">
+                            <i class='bx bxl-github text-xl'></i>
+                        </a>
+                    `;
+                }
+
                 card.innerHTML = `
                     <div class="relative h-60 overflow-hidden">
                         <div class="absolute inset-0 bg-dark/40 group-hover:bg-dark/10 transition-all duration-500 z-10"></div>
@@ -230,10 +246,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <h3 class="text-xl font-bold mb-2 text-gray-200 group-hover:text-white transition-colors duration-300 truncate">${proj.name}</h3>
                         <p class="text-gray-400 text-sm mb-6 line-clamp-3">${proj.description}</p>
                         <div class="flex items-center gap-4">
-                            <a href="${proj.demoUrl}" ${proj.demoUrl !== '#' ? 'target="_blank"' : ''} class="flex-1 text-center px-4 py-2 bg-white/5 hover:bg-white hover:text-dark border border-gray-700 hover:border-white rounded-lg text-sm font-medium transition-all duration-300">Live Demo</a>
-                            <a href="${proj.githubUrl}" ${proj.githubUrl !== '#' ? 'target="_blank"' : ''} class="flex items-center justify-center w-10 h-10 bg-white/5 hover:bg-white hover:text-dark border border-gray-700 rounded-lg transition-all duration-300">
-                                <i class='bx bxl-github text-xl'></i>
-                            </a>
+                            ${actionButtonsHTML}
                         </div>
                     </div>
                 `;
